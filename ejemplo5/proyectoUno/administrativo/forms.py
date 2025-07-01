@@ -47,12 +47,25 @@ class EstudianteForm(ModelForm):
             raise forms.ValidationError("Ingrese correo válido para la Universidad")
         return valor
 
-
 class NumeroTelefonicoForm(ModelForm):
     class Meta:
         model = NumeroTelefonico
         fields = ['telefono', 'tipo', 'estudiante']
 
+    def clean_telefono(self):
+        valor = self.cleaned_data['telefono']
+        if len(valor) != 10 or not valor.isdigit():
+            raise forms.ValidationError("El teléfono debe tener exactamente 10 dígitos numéricos.")
+        return valor
+
+    def clean_tipo(self):
+        valor = self.cleaned_data['tipo']
+        if not valor:
+            raise forms.ValidationError("El tipo es obligatorio.")
+        primer_caracter = valor[0].lower()
+        if primer_caracter in 'aeiou':
+            raise forms.ValidationError("El tipo debe empezar con una consonante.")
+        return valor
 
 class NumeroTelefonicoEstudianteForm(ModelForm):
 
